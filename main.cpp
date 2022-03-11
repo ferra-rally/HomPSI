@@ -1,5 +1,4 @@
 #include <iostream>
-#include <chrono>
 #include "examples.h"
 #include "base64.h"
 #include "protoBuff/ciphertexts.pb.h"
@@ -24,7 +23,7 @@ vector<string> read_csv(const string &filename) {
     return rows;
 }
 
-SEALContext generateContext(const string& out_params_filename) {
+SEALContext generate_context(const string& out_params_filename) {
     //Prepare parameters
     EncryptionParameters parms(scheme_type::bfv);
 
@@ -63,19 +62,6 @@ SEALContext generateContext(const string& out_params_filename) {
     return context;
 }
 
-SEALContext getContext() {
-    EncryptionParameters parms(scheme_type::bfv);
-    ifstream parmsFile;
-    parmsFile.open("./params.par");
-
-    parms.load(parmsFile);
-
-    SEALContext context(parms);
-    parmsFile.close();
-
-    return context;
-}
-
 SEALContext get_context_from_file(const string& params_filename) {
     EncryptionParameters parms(scheme_type::bfv);
     ifstream parmsFile;
@@ -93,8 +79,8 @@ SEALContext get_context_from_file(const string& params_filename) {
     return context;
 }
 
-void setup(const string& params_filename, string sec_key_filename, string pub_key_filename, string relin_key_filename) {
-    SEALContext context = generateContext(params_filename);
+void setup(const string& params_filename, const string& sec_key_filename, const string& pub_key_filename, const string& relin_key_filename) {
+    SEALContext context = generate_context(params_filename);
 
     cout << "Params file: " << params_filename << endl;
     cout << "Pub Key file: " << pub_key_filename << endl;
@@ -113,22 +99,21 @@ void setup(const string& params_filename, string sec_key_filename, string pub_ke
     RelinKeys relinKeys;
     keygen.create_relin_keys(relinKeys);
 
-    ofstream relkeyfile(relin_key_filename);
-    relinKeys.save(relkeyfile);
-    relkeyfile.close();
-
     //Saving keys
     ofstream pubkeyfile;
     ofstream seckeyfile;
+    ofstream relkeyfile(relin_key_filename);
 
     pubkeyfile.open(pub_key_filename);
     seckeyfile.open(sec_key_filename);
 
     public_key.save(pubkeyfile);
     secret_key.save(seckeyfile);
+    relinKeys.save(relkeyfile);
 
     pubkeyfile.close();
     seckeyfile.close();
+    relkeyfile.close();
 }
 
 string convert_to_hex(const string& input) {
@@ -309,7 +294,7 @@ int inter(const string &pub_key_filename, const string &csv_filename, const stri
 
     for(int i = 0; i < in_ciphertexts.size(); i++) {
         Ciphertext in_ciphertext = in_ciphertexts[i];
-        Plaintext p(uint64_to_hex_string(random() + 1));
+        Plaintext p(uint64_to_hex_string(random_uint64() + 1));
         Ciphertext res;
         vector<Ciphertext> partials;
 
@@ -493,9 +478,6 @@ int main(int argc, char *argv[]) {
                     i++;
                 } else if(!strcmp(argv[i], "-o") && argc > i + 1) {
                     out_filename = argv[i + 1];
-                    i++;
-                } else if(!strcmp(argv[i], "-p") && argc > i + 1) {
-                    params_filename = argv[i + 1];
                     i++;
                 } else if(!strcmp(argv[i], "-p") && argc > i + 1) {
                     params_filename = argv[i + 1];

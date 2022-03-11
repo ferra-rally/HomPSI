@@ -4,7 +4,7 @@ project(HomPSI)
 set(CMAKE_CXX_FLAGS "-g -Wall -Werror -std=c++14")
 set(CMAKE_CXX_STANDARD 14)
 
-add_executable(HomPSI main.cpp protoBuff/ciphertexts.pb.cc protoBuff/ciphertexts.pb.h base64.cpp base64.h)
+add_executable(HomPSI main.cpp protoBuff/ciphertexts.pb.cc protoBuff/ciphertexts.pb.h)
 
 INCLUDE(FindProtobuf)
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR})
