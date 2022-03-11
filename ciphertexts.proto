@@ -1,0 +1,7 @@
+syntax = "proto2";
+
+package HomPSI;
+
+message Ciphertexts {
+  repeated bytes cipherTexts = 1;
+}
