@@ -28,7 +28,7 @@ $ HomPSI setup -k pub.key -s sec.key -p params.par -r relin.key
 $ HomPSI setup
 ```
 
-###Encrypt
+### Encrypt
 This command is used by the sender to encrypt a file. The encryption is done for every row of the file.
 
 Flags: 
@@ -42,7 +42,7 @@ $ HomPSI encrypt -k pub.key -i input.csv -p params.par -o rec.pb
 $ HomPSI encrypt
 ```
 
-###Inter
+### Inter
 This command is used bu the sender to do the intersection between the encrypted dataset and the sender dataset.
 
 Flags:
@@ -57,7 +57,7 @@ $ HomPSI inter -k pub.key -i input.csv -p params.par -o sender.pb
 $ HomPSI inter
 ```
 
-###Receive
+### Receive
 This command is used by the receiver to check the intersection.
 
 Flags:
