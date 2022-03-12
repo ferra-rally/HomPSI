@@ -5,15 +5,15 @@ HomPSI is a Homomorphic Public Set Intersection utility written in C++. It is ba
 - [Build](#build)
 - [Documentation](#documentation)
 
-#Requirements
+## Requirements
 The HomPSI utility requires to be compiled in a system with Microsoft SEAL and protobuf installed.
 
-#Build
+## Build
 Before building the executable run make in order to compile the protocol buffer.
 
-#Documentation
+## Documentation
 
-###Setup
+### Setup
 The setup command is used to setup encryption parameters and keys. 
 
 Flags:
@@ -21,6 +21,8 @@ Flags:
 - -s: secret key output file (default: sec.key)
 - -p: parameters output file (default: params.par)
 - -r: relinearization output file (default: relin.key)
+- -y: poly modulus degree (default: 8192, possible values {4096, 8192, 16384, 32768})
+- -l: plai modulus degree (default: 1024, should be as small as possible do decreese noise consumption)
 ```console
 $ HomPSI setup -k pub.key -s sec.key -p params.par -r relin.key
 $ HomPSI setup

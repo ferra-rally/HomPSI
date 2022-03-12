@@ -1,6 +1,5 @@
 #include <iostream>
 #include "examples.h"
-#include "base64.h"
 #include "protoBuff/ciphertexts.pb.h"
 
 using namespace seal;
@@ -23,7 +22,7 @@ vector<string> read_csv(const string &filename) {
     return rows;
 }
 
-SEALContext generate_context(const string& out_params_filename) {
+SEALContext generate_context(const string& out_params_filename, int poly_modulus, int plain_modulus) {
     //Prepare parameters
     EncryptionParameters parms(scheme_type::bfv);
 
@@ -32,7 +31,7 @@ SEALContext generate_context(const string& out_params_filename) {
     //    values are 1024, 2048, 4096, 8192, 16384, 32768, but it is also possible
     //    to go beyond this range.
 
-    size_t poly_modulus_degree = 8192;
+    size_t poly_modulus_degree = poly_modulus;
     parms.set_poly_modulus_degree(poly_modulus_degree);
 
     //        +----------------------------------------------------+
@@ -47,9 +46,7 @@ SEALContext generate_context(const string& out_params_filename) {
     //        +---------------------+------------------------------+
 
     parms.set_coeff_modulus(CoeffModulus::BFVDefault(poly_modulus_degree));
-    //parms.set_plain_modulus(PlainModulus::Batching(poly_modulus_degree, 20));
-    //parms.set_plain_modulus(218);
-    parms.set_plain_modulus(1024);
+    parms.set_plain_modulus(plain_modulus);
 
     SEALContext context(parms);
 
@@ -58,6 +55,8 @@ SEALContext generate_context(const string& out_params_filename) {
     parms.save(parmsFile);
 
     parmsFile.close();
+
+    print_parameters(context);
 
     return context;
 }
@@ -79,8 +78,8 @@ SEALContext get_context_from_file(const string& params_filename) {
     return context;
 }
 
-void setup(const string& params_filename, const string& sec_key_filename, const string& pub_key_filename, const string& relin_key_filename) {
-    SEALContext context = generate_context(params_filename);
+void setup(const string& params_filename, const string& sec_key_filename, const string& pub_key_filename, const string& relin_key_filename, int poly_modulus, int plain_modulus) {
+    SEALContext context = generate_context(params_filename, poly_modulus, plain_modulus);
 
     cout << "Params file: " << params_filename << endl;
     cout << "Pub Key file: " << pub_key_filename << endl;
@@ -217,6 +216,8 @@ int inter(const string &pub_key_filename, const string &csv_filename, const stri
     HomPSI::Ciphertexts in_protocol_buffer = HomPSI::Ciphertexts();
     HomPSI::Ciphertexts out_protocol_buffer = HomPSI::Ciphertexts();
 
+    print_parameters(context);
+
     cout << "Key file: " << pub_key_filename << endl;
     cout << "Relinearization key file: " << relin_key_filename << endl;
     cout << "Params file: " << params_filename << endl;
@@ -348,6 +349,8 @@ int inter(const string &pub_key_filename, const string &csv_filename, const stri
 int receive(const string &sec_key_filename, const string &csv_filename, const string &in_protocol_buffer_filename, const string &intersection_filename, const string& params_filename) {
     SEALContext context = get_context_from_file(params_filename);
 
+    print_parameters(context);
+
     cout << "Key file: " << sec_key_filename << endl;
     cout << "Params file: " << params_filename << endl;
     cout << "CSV file: " << csv_filename << endl;
@@ -438,6 +441,8 @@ int main(int argc, char *argv[]) {
         string sec_key_filename = "sec.key";
         string params_filename = "params.par";
         string relin_key_filename = "relin.key";
+        int plain_modulus = 1024;
+        int poly_modulus = 8192;
 
         if(argc >= 2) {
             for (int i = 2; i < argc; ++i) {
@@ -453,6 +458,12 @@ int main(int argc, char *argv[]) {
                 } else if(!strcmp(argv[i], "-r") && argc > i + 1) {
                     relin_key_filename = argv[i + 1];
                     i++;
+                } else if(!strcmp(argv[i], "-y") && argc > i + 1) {
+                    poly_modulus = stoi(argv[i + 1]);
+                    i++;
+                } else if(!strcmp(argv[i], "-l") && argc > i + 1) {
+                    plain_modulus = stoi(argv[i + 1]);
+                    i++;
                 }
             }
         } else if(argc == 1) {
@@ -461,7 +472,7 @@ int main(int argc, char *argv[]) {
             return -1;
         }
 
-        setup(params_filename, sec_key_filename, pub_key_filename, relin_key_filename);
+        setup(params_filename, sec_key_filename, pub_key_filename, relin_key_filename, poly_modulus, plain_modulus);
     } else if (command == "encrypt") {
         string key_filename = "pub.key";
         string csv_filename = "receiver.csv";
