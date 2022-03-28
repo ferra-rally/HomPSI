@@ -427,16 +427,7 @@ int main(int argc, char *argv[]) {
     }
 
     string command = argv[1];
-    if (command == "help") {
-        cout << "Commands:\n"
-                "\tsetup: setup keys for the receiver and generates key files\n"
-                "\thelp: prints list of commands\n"
-                "\tencrypt <pubkey> <csv file to encrypt> <out csv>: crypt a series of bitstrings of the same lenght\n"
-                "\tinter <pubkey> <own csv file> <target csv>\n"
-                "\treceive <seckey> <own csv file> <received file>\n";
-
-        return 0;
-    } else if (command == "setup") {
+    if (command == "setup") {
         string pub_key_filename = "pub.key";
         string sec_key_filename = "sec.key";
         string params_filename = "params.par";
@@ -572,6 +563,36 @@ int main(int argc, char *argv[]) {
         }
 
         receive(key_filename, csv_filename, in_pb_filename, out_filename, params_filename);
+    } else if(command == "help") {
+        cout << "Commands\n"
+                "help - print help message\n"
+                "setup - setup parameters and keys\n"
+                "   -k: public key output file (default: pub.key)\n"
+                "   -s: secret key output file (default: sec.key)\n"
+                "   -p: parameters output file (default: params.par)\n"
+                "   -r: relinearization output file (default: relin.key)\n"
+                "   -y: poly modulus degree (default: 8192, possible values {4096, 8192, 16384, 32768})\n"
+                "   -l: plain modulus degree (default: 1024, should be as small as possible do decreese noise consumption)\n"
+                "encrypt - encrypt file of the receiver\n"
+                "   -k: public key file (default: pub.key)\n"
+                "   -i: input file (default: receiver.csv)\n"
+                "   -p: parameters file (default: params.par)\n"
+                "   -o: output file (default: receiver.pb)\n"
+                "inter - intersect between encrypted receiver's dataset and sender's dataset\n"
+                "   -k: public key file (default: pub.key)\n"
+                "   -i: input file (default: sender.csv)\n"
+                "   -p: parameters file (default: params.par)\n"
+                "   -o: output file (default: sender.pb)\n"
+                "   -r: relinearization key file (default: relin.key)\n"
+                "   -b: input ciphers file (default: receiver.pb)\n"
+                "receive - obtain the values of the intersection\n"
+                "   -k: secret key file (default: sec.key)\n"
+                "   -i: receiver plaintext file (default: receiver.csv)\n"
+                "   -p: parameters file (default: params.par)\n"
+                "   -o: output file (default: intersection.csv)\n"
+                "   -b: input sender ciphers file (default: sender.pb)"
+                << endl;
+        return 0;
     }
 
     return 0;

@@ -22,14 +22,14 @@ Flags:
 - -p: parameters output file (default: params.par)
 - -r: relinearization output file (default: relin.key)
 - -y: poly modulus degree (default: 8192, possible values {4096, 8192, 16384, 32768})
-- -l: plai modulus degree (default: 1024, should be as small as possible do decreese noise consumption)
+- -l: plain modulus degree (default: 1024, should be as small as possible do decreese noise consumption)
 ```console
 $ HomPSI setup -k pub.key -s sec.key -p params.par -r relin.key
 $ HomPSI setup
 ```
 
 ### Encrypt
-This command is used by the sender to encrypt a file. The encryption is done for every row of the file.
+This command is used by the receiver to encrypt a file. The encryption is done for every row of the file.
 
 Flags: 
 - -k: public key file (default: pub.key)
@@ -43,7 +43,7 @@ $ HomPSI encrypt
 ```
 
 ### Inter
-This command is used bu the sender to do the intersection between the encrypted dataset and the sender dataset.
+This command is used by the sender to do the intersection between the encrypted dataset and the sender dataset.
 
 Flags:
 - -k: public key file (default: pub.key)
