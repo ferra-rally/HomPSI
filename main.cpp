@@ -409,9 +409,8 @@ int receive(const string &sec_key_filename, const string &csv_filename, const st
 
         if(plaintext.to_string() == "0") {
             cout << "Match for " << csvRows[i] << endl;
+            intersection_stream << csvRows[i] << endl;
         }
-
-        intersection_stream << csvRows[i] << endl;
     }
 
     intersection_stream.close();
